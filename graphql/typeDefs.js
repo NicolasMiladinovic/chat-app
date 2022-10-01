@@ -1,4 +1,4 @@
-const {gql} = require('apollo-server')
+const { gql } = require('apollo-server')
 
 // GraphQL schema
 module.exports = gql`
@@ -8,5 +8,13 @@ type User {
 }
 type Query {
     getUsers: [User]!
+}
+type Mutation {
+    register(
+        username: String!
+        email: String!
+        password: String!
+        confirmPassword: String!
+    ): User!
 }
 `
