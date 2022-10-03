@@ -1,6 +1,7 @@
 const { User } = require('../models')
 const bcrypt = require('bcryptjs')
-const { UserInputError } = require('apollo-server')
+const jwt = require('jsonwebtoken')
+const { UserInputError, AuthenticationError } = require('apollo-server')
 
 module.exports = {
     Query: {
@@ -11,6 +12,40 @@ module.exports = {
                 return users
             } catch (err) {
                 console.log(err);
+            }
+        },
+        login: async (_, args) => {
+            const { username, password } = args
+            let errors = {}
+
+            try {
+                if (username.trim() === '') errors.username = 'username must not be empty'
+                if (password === '') errors.password = 'password must not be empty'
+
+                if (Object.keys(errors).length > 0) {
+                    throw new UserInputError('bad input', { errors })
+                }
+
+                const user = await User.findOne({
+                    where: { username }
+                })
+
+                if (!user) {
+                    errors.username = 'user not found'
+                    throw new UserInputError('user not found', { errors })
+                }
+
+                const correctPassword = await bcrypt.compare(password, user.password)
+
+                if (!correctPassword) {
+                    errors.password = 'password is incorect'
+                    throw new AuthenticationError('password is incorrect', { errors })
+                }
+
+                return user
+            } catch (err) {
+                console.log(err)
+                throw err
             }
         }
     },
@@ -41,7 +76,7 @@ module.exports = {
                     password
                 })
 
-                // TODO: return user
+                // return user
                 return user
             } catch (err) {
                 console.log(err);
