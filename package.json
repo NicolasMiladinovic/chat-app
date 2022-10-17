@@ -5,6 +5,7 @@
     "graphql": "^16.2.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
+    "node-sass": "^7.0.3",
     "sequelize": "^6.12.5",
     "update-notifier": "^6.0.2"
   },

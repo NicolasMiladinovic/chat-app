@@ -14,3 +14,7 @@ React.js
 Node.js
 
 GraphQL
+
+Bootstrap
+
+Sass
