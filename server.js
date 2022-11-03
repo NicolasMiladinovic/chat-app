@@ -2,7 +2,7 @@ const { ApolloServer } = require('apollo-server');
 
 const { sequelize } = require('./models/index.js')
 
-const resolvers = require('./graphql/resolver.js')
+const resolvers = require('./graphql/resolvers')
 const typeDefs = require('./graphql/typeDefs.js')
 const contextMiddleware = require('./util/contextMiddleware')
 
