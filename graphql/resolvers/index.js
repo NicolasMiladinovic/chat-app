@@ -2,6 +2,9 @@ const userResolver = require('./users')
 const messageResolver = require('./messages')
 
 module.exports = {
+  Message: {
+    createdAt: createdAt.toISOString(),
+  },
   Query: {
     ...userResolver.Query,
     ...messageResolver.Query,

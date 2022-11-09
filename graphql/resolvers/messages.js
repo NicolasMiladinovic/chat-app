@@ -1,33 +1,61 @@
 const { Message, User } = require('../../models')
 const { UserInputError, AuthenticationError } = require('apollo-server')
+const { Op } = require('sequelize')
 
 module.exports = {
-  Mutation: {
-      sendMessage: async (parent, { to, content }, { user }) => {
-          try {
-              if (!user) throw new AuthenticationError('Unauthenticated')
+    Query: {
+        getMessages: async (parent, { from }, { user }) => {
+            try {
+                if (!user) throw new AuthenticationError('Unauthenticated')
 
-              const recipient = await User.findOne({ where: { username: to } })
+                const otherUser = await User.findOne({
+                    where: { username: from }
+                })
+                if (!otherUser) throw new UserInputError('User not found')
 
-              if (!recipient) {
-                  throw new UserInputError('User not found')
-              } else if(recipient.username === user.username) {
-                  throw new UserInputError('You can\'t message yourself')
-              }
+                const usernames = [user.username, otherUser.username]
 
-              if(content.trim() === '') throw new UserInputError('Message is empty')
+                const messages = await Message.findAll({
+                    where: {
+                        from: { [Op.in]: usernames },
+                        to: { [Op.in]: usernames }
+                    },
+                    order: [['createdAt', 'DESC']]
+                })
 
-              const message = await Message.create({
-                  from: user.username,
-                  to,
-                  content
-              })
+                return messages
+            } catch (err) {
+                console.log(err);
+                throw err
+            }
+        }
+    },
+    Mutation: {
+        sendMessage: async (parent, { to, content }, { user }) => {
+            try {
+                if (!user) throw new AuthenticationError('Unauthenticated')
 
-              return message
-          } catch (err) {
-              console.log(err);
-              throw err
-          }
-      }
-  }
+                const recipient = await User.findOne({ where: { username: to } })
+
+                if (!recipient) {
+                    throw new UserInputError('User not found')
+                } else if (recipient.username === user.username) {
+                    throw new UserInputError('You can\'t message yourself')
+                }
+
+                if (content.trim() === '') throw new UserInputError('Message is empty')
+
+                const message = await Message.create({
+                    from: user.username,
+                    to,
+                    content
+                })
+
+                return message
+            } catch (err) {
+                console.log(err);
+                throw err
+            }
+        }
+    }
 }
