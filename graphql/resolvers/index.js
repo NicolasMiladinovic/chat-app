@@ -3,7 +3,7 @@ const messageResolver = require('./messages')
 
 module.exports = {
   Message: {
-    createdAt: createdAt.toISOString(),
+    createdAt: (parent) => parent.createdAt.toISOString(),
   },
   Query: {
     ...userResolver.Query,
