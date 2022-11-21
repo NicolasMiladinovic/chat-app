@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useDebugValue, useState } from 'react'
 import { Row, Col, Form, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { gql, useLazyQuery } from '@apollo/client';
+import { useAuthDispatch } from '../context/auth';
 
 const LOGIN_USER = gql`
   query login($username: String!, $password: String!) {
@@ -17,12 +18,15 @@ export default function Login(props) {
     password: '',
   })
   const [errors, setErrors] = useState({})
+
+  const dispatch = useAuthDispatch()
+  let navigate = useNavigate()
+
   const [loginUser, { loading }] = useLazyQuery(LOGIN_USER, {
     onError: (err) => setErrors(err.graphQLErrors[0].extensions.errors),
     onCompleted(data) {
-      localStorage.setItem('token', data.login.token)
-      // props.history.push('/')
-      window.location.href = '/'
+      dispatch({type: 'LOGIN', payload: data.login})
+      navigate('/')
     }
   })
 
