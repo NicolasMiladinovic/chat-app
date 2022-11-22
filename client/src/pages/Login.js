@@ -20,7 +20,7 @@ export default function Login(props) {
   const [errors, setErrors] = useState({})
 
   const dispatch = useAuthDispatch()
-  let navigate = useNavigate()
+  const navigate = useNavigate()
 
   const [loginUser, { loading }] = useLazyQuery(LOGIN_USER, {
     onError: (err) => setErrors(err.graphQLErrors[0].extensions.errors),
