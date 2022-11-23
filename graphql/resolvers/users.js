@@ -51,8 +51,6 @@ module.exports = {
               // 60min 60sec
               const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: 60 * 60 })
 
-              // user.token = token
-
               return {
                   ...user.toJSON(),
                   createdAt: user.createdAt.toISOString(),

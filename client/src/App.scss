@@ -12,6 +12,10 @@ body {
       rgba(252, 176, 69, 0.9) 100%);
 }
 
+.row > * {
+  width: unset;
+}
+
 .btnRegister{
   color: white;
 }
